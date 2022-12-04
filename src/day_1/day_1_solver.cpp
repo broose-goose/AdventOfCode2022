@@ -16,6 +16,7 @@ long ElfCalorieMaximum(const std::string &elf_log_file, const unsigned int elves
 
     // get data dir directory
     std::string absolute_path = Common::get_data_file_path(elf_log_file);
+    std::cout << absolute_path << std::endl;
 
     std::ifstream elf_log;
     elf_log.open(absolute_path);

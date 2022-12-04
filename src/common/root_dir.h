@@ -11,9 +11,16 @@
 #define TOSTRING(x) STRINGIFY(x)
 #define ROOT_PATH TOSTRING(PROJECT_DIR)
 
+const char kPathSeparator =
+#ifdef _WIN32
+                            '\\';
+#else
+                            '/';
+#endif
+
 namespace Common {
     std::string get_data_file_path(const std::string &f_name) {
-        return std::string(ROOT_PATH) + "\\data\\" + f_name;
+        return std::string(ROOT_PATH) +  kPathSeparator + "data" + kPathSeparator + f_name;
     }
 }
 

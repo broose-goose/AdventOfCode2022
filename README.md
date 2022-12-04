@@ -17,3 +17,24 @@ $ ninja install
 # now we can run things :D
 $ .\day_1.exe
 ```
+
+### Mac
+
+```
+$ brew install cmake
+$ mkdir build
+$ cmake -DCMAKE_BUILD_TYPE=Release ..
+$ make
+$ make install
+# now we can run things D:
+$ ./day_4.exe
+```
+
+## Multiple Repos
+
+Well, I have this set up on my personal github so I can work on it in my comfy CLion env. B/c of this, I need to:
+
+```
+$ git pull origin main
+$ git push aledade_gitlab main
+```
