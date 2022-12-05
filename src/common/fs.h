@@ -5,6 +5,10 @@
 #ifndef ADVENTOFCODE2022_ROOT_DR_H
 #define ADVENTOFCODE2022_ROOT_DR_H
 
+
+#include <optional>
+#include <iostream>
+#include <fstream>
 #include <string>
 
 #define STRINGIFY(x) #x
@@ -90,7 +94,8 @@ namespace Common {
     private:
         explicit FileReader(const std::string &data_file) {
             std::string absolute_path = Common::get_data_file_path(data_file);
-            file_data = std::ifstream(absolute_path);
+            file_data = std::ifstream();
+            file_data.open(absolute_path);
         }
         std::ifstream file_data;
         std::stack<std::string> previous_lines;

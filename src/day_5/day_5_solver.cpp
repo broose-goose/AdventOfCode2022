@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <fstream>
 #include <stack>
 #include <vector>
 #include <regex>
@@ -34,7 +33,7 @@ std::ostream &operator <<(std::ostream &o, const supply_crates &crates)
 }
 
 int DetermineCrateStacks(const std::string &stack_numbers) {
-    std::regex get_last_crate_number(R"((\d+)\s?+$)");
+    std::regex get_last_crate_number(R"((\d+)\s?$)", std::regex_constants::ECMAScript);
     std::smatch match;
     if (std::regex_search(stack_numbers, match, get_last_crate_number)) {
         return stoi(match[0]);
