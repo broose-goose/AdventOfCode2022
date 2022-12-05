@@ -9,82 +9,7 @@
 #include <regex>
 #include <optional>
 
-#include "common/root_dir.h"
-
-class FileReader {
-public:
-    static std::optional<FileReader> CreateFileReader(const std::string &data_file) {
-        std::cout << "Reading File: " << data_file << std::endl;
-        FileReader reader(data_file);
-        if (reader.file_data.fail()) {
-            std::cout << "Failed to open file: data/" << data_file << std::endl;
-            return {};
-        } else {
-            return reader;
-        }
-    }
-
-    bool GetLine(std::string &write_to_line) {
-        if (!next_lines.empty()) {
-            if (current_line) {
-                previous_lines.push(current_line.value());
-            }
-            write_to_line = next_lines.top();
-            current_line = next_lines.top();
-            next_lines.pop();
-            return true;
-        }
-        std::getline(file_data, write_to_line);
-        if (file_data.fail()) {
-            return false;
-        }
-        if (current_line) {
-            previous_lines.push(*current_line);
-        }
-        current_line = write_to_line;
-        return true;
-    }
-
-    bool GetLastLine(std::string &write_to_line) {
-        if (previous_lines.empty()) {
-            return false;
-        }
-        if (current_line) {
-            next_lines.push(current_line.value());
-        }
-        write_to_line = previous_lines.top();
-        current_line = write_to_line;
-        previous_lines.pop();
-        return true;
-    }
-
-    void SeekToEnd(std::string &write_to_line) {
-        if (current_line) {
-            previous_lines.push(current_line.value());
-        }
-        while (!next_lines.empty()) {
-            current_line = next_lines.top();
-            previous_lines.push(current_line.value());
-            next_lines.pop();
-        }
-        write_to_line = current_line.value();
-    }
-
-    void Close() {
-        if (file_data.is_open()) {
-            file_data.close();
-        }
-    }
-private:
-    explicit FileReader(const std::string &data_file) {
-        std::string absolute_path = Common::get_data_file_path(data_file);
-        file_data = std::ifstream(absolute_path);
-    }
-    std::ifstream file_data;
-    std::stack<std::string> previous_lines;
-    std::optional<std::string> current_line;
-    std::stack<std::string> next_lines;
-};
+#include "common/fs.h"
 
 typedef std::stack<char> crate_stack;
 
@@ -197,11 +122,11 @@ const std::regex Operation::regex_str(R"(move (\d+) from (\d+) to (\d+))");
 std::string RunElvenCrane(const std::string &crate_stack_plan, bool is_9001_unit) {
     std::cout << "Running Elven Crane Simulation" << std::endl;
     std::string absolute_path = Common::get_data_file_path(crate_stack_plan);
-    std::optional<FileReader> op_reader = FileReader::CreateFileReader(crate_stack_plan);
+    std::optional<Common::FileReader> op_reader = Common::FileReader::CreateFileReader(crate_stack_plan);
     if (!op_reader) {
         return "";
     }
-    FileReader &reader = *op_reader;
+    Common::FileReader &reader = *op_reader;
 
     std::string plan_line;
     int stack_index_line = 0;

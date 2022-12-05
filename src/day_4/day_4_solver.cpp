@@ -6,7 +6,7 @@
 #include <fstream>
 #include <functional>
 
-#include "common/root_dir.h"
+#include "common/fs.h"
 
 typedef std::pair<int, int> elf_range;
 typedef std::pair<elf_range, elf_range> elf_pair_ranges;

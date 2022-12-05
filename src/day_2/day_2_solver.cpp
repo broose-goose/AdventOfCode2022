@@ -6,7 +6,7 @@
 #include <fstream>
 #include <functional>
 
-#include "common/root_dir.h"
+#include "common/fs.h"
 
 enum Trinary {
     Zero,

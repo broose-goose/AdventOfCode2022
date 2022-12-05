@@ -4,7 +4,7 @@
 #include <set>
 #include <map>
 
-#include "common/root_dir.h"
+#include "common/fs.h"
 
 char GetCommonValue(std::string &rucksack_contents) {
     std::set<char> found_contents;
