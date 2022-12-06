@@ -120,7 +120,6 @@ const std::regex Operation::regex_str(R"(move (\d+) from (\d+) to (\d+))");
 
 std::string RunElvenCrane(const std::string &crate_stack_plan, bool is_9001_unit) {
     std::cout << "Running Elven Crane Simulation" << std::endl;
-    std::string absolute_path = Common::get_data_file_path(crate_stack_plan);
     std::optional<Common::FileReader> op_reader = Common::FileReader::CreateFileReader(crate_stack_plan);
     if (!op_reader) {
         return "";

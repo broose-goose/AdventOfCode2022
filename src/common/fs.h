@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stack>
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
