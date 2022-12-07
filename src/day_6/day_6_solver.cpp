@@ -22,7 +22,7 @@ std::vector<std::tuple<std::string, int, int>> example_packets = {
 
 class CorruptPacket {
 public:
-    CorruptPacket(const std::string &p): raw_packet(p) {}
+    explicit CorruptPacket(const std::string &p): raw_packet(p) {}
 
     int GetEndOfHeader() {
         if (end_of_header == -1) {
