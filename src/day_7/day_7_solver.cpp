@@ -20,6 +20,7 @@ struct File {
 struct Folder {
     int size = 0;
     std::string name;
+    std::string path;
     std::shared_ptr<Folder> parent = nullptr;
     std::map<std::string, File> files;
     std::map<std::string, std::shared_ptr<Folder>> children;
@@ -36,19 +37,8 @@ struct Folder {
             ancestor = ancestor->parent;
         }
     }
-    std::string DetailsString() {
-        std::string out = name ;
-        auto ancestor = parent;
-        while (ancestor != nullptr) {
-            out.insert(0, "/");
-            out.insert(0, name);
-            ancestor = ancestor->parent;
-        }
-        out.insert(0, "(");
-        out.append(" ");
-        out.append(std::to_string(size));
-        out.append(")");
-        return out;
+    std::string DetailsString() const {
+        return "(Path: " + path + ", Size: " + std::to_string(size) + ")";
     }
 };
 
@@ -81,8 +71,13 @@ public:
         }
         printFolder(root, 0);
     }
-    int SumDirectoriesSmallerThan(int smaller_than) {
-        int total = 0;
+    void AnswerQuestions() {
+        const int smaller_than = 100000;
+        const int available_space = 70000000 - root->size;
+        const int needed_space = 30000000 - available_space;
+        int total_smaller_than = 0;
+        std::shared_ptr<Folder> smallest_deletable_folder = root;
+        std::string longest_path = root->path;
         std::deque<std::shared_ptr<Folder>> folder_dq = { root };
         while (!folder_dq.empty()) {
             for (auto &folder_pair : folder_dq.front()->children) {
@@ -92,20 +87,7 @@ public:
 #ifdef DEBUG
                 std::cout << "Small folder found: " << folder_dq.front()->DetailsString() << std::endl;
 #endif
-                total += folder_dq.front()->size;
-            }
-            folder_dq.pop_front();
-        }
-        return total;
-    }
-    std::shared_ptr<Folder> GetSmallestDeletableFolder() {
-        const int available_space = 70000000 - root->size;
-        const int needed_space = 30000000 - available_space;
-        std::shared_ptr<Folder> smallest_deletable_folder = root;
-        std::deque<std::shared_ptr<Folder>> folder_dq = { root };
-        while (!folder_dq.empty()) {
-            for (auto &folder_pair: folder_dq.front()->children) {
-                folder_dq.push_back(folder_pair.second);
+                total_smaller_than += folder_dq.front()->size;
             }
             if (folder_dq.front()->size >= needed_space) {
                 if (smallest_deletable_folder == nullptr || folder_dq.front()->size < smallest_deletable_folder->size) {
@@ -115,9 +97,17 @@ public:
                     smallest_deletable_folder = folder_dq.front();
                 }
             }
+            if (folder_dq.front()->path.size() > longest_path.size()) {
+                longest_path = folder_dq.front()->path;
+            }
             folder_dq.pop_front();
         }
-        return smallest_deletable_folder;
+        std::cout << "Total smaller than " << std::to_string(smaller_than) << " (bytes?): " <<
+            std::to_string(total_smaller_than) << std::endl;
+
+        std::cout << "Smallest deletable directory: " << smallest_deletable_folder->DetailsString() << std::endl;
+
+        std::cout << "Longest folder path: " << longest_path << std::endl;
     }
 private:
     std::shared_ptr<Folder> root = nullptr;
@@ -168,7 +158,7 @@ private:
                 return false;
             }
             if (!cwd->children.contains(matches[1])) {
-                std::make_shared<Folder>(Folder());
+                createNewFolder(matches[1]);
             }
         } else if (std::regex_search(console_line, matches, file_regex)) {
             if (matches.size() != 3) {
@@ -186,9 +176,13 @@ private:
     }
 
     std::shared_ptr<Folder> createNewFolder(const std::string &folder_name) {
+        if (cwd->children.contains(folder_name)) {
+            return cwd->children.at(folder_name);
+        }
         auto new_folder = std::make_shared<Folder>(Folder());
         new_folder->name = folder_name;
         new_folder->parent = cwd;
+        new_folder->path = cwd->path + "/" + folder_name;
         cwd->children.insert({ folder_name, new_folder });
         return new_folder;
     }
@@ -229,19 +223,9 @@ int FindSmallFiles() {
     session.Tree();
 #endif
 
-    int solution_1 = session.SumDirectoriesSmallerThan(100000);
-    if (solution_1 == -1) {
-        return -1;
-    }
-    std::cout << "Directories with below 100000 (bytes?): " << solution_1 << std::endl;
+    session.AnswerQuestions();
 
-    std::shared_ptr<Folder> solution_2 = session.GetSmallestDeletableFolder();
-    if (solution_2 == nullptr) {
-        return -1;
-    }
-    std::cout << "Smallest deletable directory: " << solution_2->DetailsString() << std::endl;
-
-    return 1;
+    return 0;
 }
 
 
