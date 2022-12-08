@@ -248,7 +248,24 @@ int ElvenElevationParsing() {
         }
     }
 
-    std::cout << "Max viewing distance: " << max_view << std::endl;
+    std::cout << "Max viewing distance O(m*n(m+n)): " << max_view << std::endl;
+
+    max_view = 0;
+    for (auto &tree : max_top) {
+        max_view = std::max(max_view, MaxView(trees, tree));
+    }
+    for (auto &tree : max_bottom) {
+        max_view = std::max(max_view, MaxView(trees, tree));
+    }
+    for (auto &tree : max_left) {
+        max_view = std::max(max_view, MaxView(trees, tree));
+    }
+    for (auto &tree : max_right) {
+        max_view = std::max(max_view, MaxView(trees, tree));
+    }
+
+    std::cout << "THIS WORKS but I'm not sure if its correct.." << std::endl;
+    std::cout << "Max viewing distance O(m*n): " << max_view << std::endl;
 
     return 0;
 }
