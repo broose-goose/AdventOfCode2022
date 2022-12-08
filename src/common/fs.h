@@ -62,6 +62,14 @@ namespace Common {
             return true;
         }
 
+        bool IsFirstLine() {
+            return previous_lines.empty();
+        }
+
+        int LineNumber() {
+            return previous_lines.size();
+        }
+
         bool GetLastLine(std::string &write_to_line) {
             if (previous_lines.empty()) {
                 return false;
@@ -85,6 +93,10 @@ namespace Common {
                 next_lines.pop();
             }
             write_to_line = current_line.value();
+        }
+
+        int LineCount() {
+            return previous_lines.size() + next_lines.size() + (current_line ? 1 : 0);
         }
 
         void Close() {
